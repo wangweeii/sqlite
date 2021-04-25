@@ -3,4 +3,4 @@ project(sqlite C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(sqlite main.c input.c input.h parser.c parser.h)
+add_executable(sqlite main.c input.c input.h parser.c parser.h exec.c exec.h)
