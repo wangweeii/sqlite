@@ -1,11 +1,8 @@
 //
-// Created by wangwei on 04/25.
+// Created by Wang Wei on 2021/5/7.
 //
 
-#include <string.h>
-#include <stdio.h>
 #include "parser.h"
-// #include "input.h"
 
 // 将输入的字符串解析为SQL语句
 PrepareResult prepare_statement(InputBuffer *input_buffer, Statement *statement)

@@ -1,33 +1,31 @@
 //
-// Created by Wang Wei on 2021/5/6.
+// Created by Wang Wei on 2021/5/7.
 //
 
-#include <stdlib.h>
 #include "table.h"
 
 // 查找当前行在表中的位置
-void *row_slot(Table *table, uint32_t row_num)
+Row *row_slot(Table *table, uint32_t row_num)
 {
         uint32_t page_num = row_num / ROWS_PER_PAGE;
-        void *page = table->pages[page_num];
+        uint32_t row_offset = row_num % ROWS_PER_PAGE;
+        Row *page = table->pages[page_num];
         // 当该页为空时就创建一个新的页
-        if (page == NULL)
+        if (page == nullptr)
         {
-                table->pages[page_num] = malloc(PAGE_SIZE);
+                table->pages[page_num] = static_cast<Row *>(malloc(PAGE_SIZE));
                 page = table->pages[page_num];
         }
-        uint32_t row_offset = row_num % ROWS_PER_PAGE;
-        uint32_t byte_offset = row_offset * ROW_SIZE;
-        return page + byte_offset;
+        return page + row_offset;
 }
 
 Table *new_table()
 {
-        Table *table = malloc(sizeof(Table));
+        auto *table = static_cast<Table *>(malloc(sizeof(Table)));
         table->num_rows = 0;
         for (uint32_t i = 0; i < TABLE_MAX_ROWS; ++i)
         {
-                table->pages[i] = NULL;
+                table->pages[i] = nullptr;
         }
         return table;
 }

@@ -1,5 +1,5 @@
 //
-// Created by Wang Wei on 2021/4/25.
+// Created by Wang Wei on 2021/5/7.
 //
 
 #include "exec.h"
@@ -21,7 +21,7 @@ ExecuteResult execute_insert(Statement *statement, Table *table)
 
 ExecuteResult execute_select(Statement *statement, Table *table)
 {
-        Row row;
+        Row row{};
         for (uint32_t i = 0; i < table->num_rows; ++i)
         {
                 deserialize_row(row_slot(table, i), &row);

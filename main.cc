@@ -1,14 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include "input.h"
-#include "parser.h"
+#include <iostream>
 #include "exec.h"
+#include "input.h"
+#include "table.h"
+#include "parser.h"
 
 void print_prompt()
 {
-        printf("db > ");
+        printf("db> ");
 }
 
 typedef enum
@@ -16,21 +14,6 @@ typedef enum
         META_COMMAND_SUCCESS,
         META_COMMAND_UNRECOGNIZED_COMMAND
 } MetaCommandResult;
-
-// #define size_of_attribute(Struct, Attribute) sizeof(((Struct*)0)->Attribute)
-//
-// const uint32_t ID_SIZE         = size_of_attribute(Row, id);
-// const uint32_t USERNAME_SIZE   = size_of_attribute(Row, username);
-// const uint32_t EMAIL_SIZE      = size_of_attribute(Row, email);
-// const uint32_t ID_OFFSET       = 0;
-// const uint32_t USERNAME_OFFSET = ID_OFFSET + ID_SIZE;
-// const uint32_t EMAIL_OFFSET    = USERNAME_OFFSET + USERNAME_SIZE;
-// const uint32_t ROW_SIZE        = ID_SIZE + USERNAME_SIZE + EMAIL_SIZE;
-//
-// const uint32_t PAGE_SIZE = 4096;
-// #define MAX_PAGES_PER_TABLE 100
-// const uint32_t ROWS_PER_PAGE  = PAGE_SIZE / ROW_SIZE;
-// const uint32_t TABLE_MAX_ROWS = ROWS_PER_PAGE * MAX_PAGES_PER_TABLE;
 
 // 执行元命令
 MetaCommandResult do_meta_command(InputBuffer *input_buffer)
@@ -79,8 +62,6 @@ int main()
                                 continue;
                 }
 
-                // execute_statement(&statement);
-                // printf("Executed.\n");
                 switch (execute_statement(&statement, table))
                 {
                         case EXECUTE_SUCCESS:
@@ -91,6 +72,5 @@ int main()
                                 break;
                 }
         }
-
         return 0;
 }
