@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.13)
-project(sqlite C)
+cmake_minimum_required(VERSION 3.19)
+project(sqlite)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 14)
 
-add_executable(sqlite main.c input.c input.h parser.c parser.h exec.c exec.h)
+add_executable(sqlite main.cc input.cc input.h row.cc row.h exec.cc exec.h parser.cc parser.h table.cc table.h)

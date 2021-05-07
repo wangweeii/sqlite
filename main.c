@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -29,9 +28,9 @@ typedef enum
 // const uint32_t ROW_SIZE        = ID_SIZE + USERNAME_SIZE + EMAIL_SIZE;
 //
 // const uint32_t PAGE_SIZE = 4096;
-// #define TABLE_MAX_PAGES 100
+// #define MAX_PAGES_PER_TABLE 100
 // const uint32_t ROWS_PER_PAGE  = PAGE_SIZE / ROW_SIZE;
-// const uint32_t TABLE_MAX_ROWS = ROWS_PER_PAGE * TABLE_MAX_PAGES;
+// const uint32_t TABLE_MAX_ROWS = ROWS_PER_PAGE * MAX_PAGES_PER_TABLE;
 
 // 执行元命令
 MetaCommandResult do_meta_command(InputBuffer *input_buffer)
@@ -48,6 +47,7 @@ MetaCommandResult do_meta_command(InputBuffer *input_buffer)
 
 int main()
 {
+        Table *table = new_table();
         InputBuffer *input_buffer = new_input_buffer();
         while (true)
         {
@@ -71,13 +71,25 @@ int main()
                 {
                         case (PREPARE_SUCCESS):
                                 break;
+                        case (PREPARE_SYNTAX_ERROR):
+                                printf("Syntax error. Could not parse statement.\n");
+                                continue;
                         case (PREPARE_UNRECOGNIZED_STATEMENT):
                                 printf("Unrecognized keyword at start of '%s'\n", input_buffer->buffer);
                                 continue;
                 }
 
-                execute_statement(&statement);
-                printf("Executed.\n");
+                // execute_statement(&statement);
+                // printf("Executed.\n");
+                switch (execute_statement(&statement, table))
+                {
+                        case EXECUTE_SUCCESS:
+                                printf("Executed.\n");
+                                break;
+                        case EXECUTE_TABLE_FULL:
+                                printf("Error: Table full.\n");
+                                break;
+                }
         }
 
         return 0;

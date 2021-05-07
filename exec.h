@@ -1,13 +1,23 @@
 //
-// Created by Wang Wei on 2021/4/25.
+// Created by Wang Wei on 2021/5/7.
 //
 
-#ifndef SQLITE_EXEC_H
-#define SQLITE_EXEC_H
+#ifndef SQLITE___EXEC_H
+#define SQLITE___EXEC_H
 
-#include <printf.h>
 #include "parser.h"
+#include "table.h"
 
-void execute_statement(Statement *statement);
+typedef enum
+{
+        EXECUTE_SUCCESS,
+        EXECUTE_TABLE_FULL
+} ExecuteResult;
 
-#endif //SQLITE_EXEC_H
+ExecuteResult execute_insert(Statement *statement, Table *table);
+
+ExecuteResult execute_select(Statement *statement, Table *table);
+
+ExecuteResult execute_statement(Statement *statement, Table *table);
+
+#endif //SQLITE___EXEC_H

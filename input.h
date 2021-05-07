@@ -1,18 +1,18 @@
 //
-// Created by wangwei on 04/25.
+// Created by Wang Wei on 2021/5/7.
 //
 
-#ifndef SQLITE_INPUT_H
-#define SQLITE_INPUT_H
+#ifndef SQLITE___INPUT_H
+#define SQLITE___INPUT_H
 
-#include <stdlib.h>
+#include <cstdio>
 
-typedef struct
+struct InputBuffer
 {
-        char    *buffer;
-        size_t  buffer_length;
+        char *buffer;
+        size_t buffer_length;
         ssize_t input_length;
-} InputBuffer;
+};
 
 InputBuffer *new_input_buffer();
 
@@ -20,4 +20,4 @@ void read_input(InputBuffer *input_buffer);
 
 void close_input_buffer(InputBuffer *input_buffer);
 
-#endif //SQLITE_INPUT_H
+#endif //SQLITE___INPUT_H

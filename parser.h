@@ -1,15 +1,12 @@
 //
-// Created by wangwei on 04/25.
+// Created by Wang Wei on 2021/5/7.
 //
 
-#ifndef SQLITE_PARSER_H
-#define SQLITE_PARSER_H
+#ifndef SQLITE___PARSER_H
+#define SQLITE___PARSER_H
 
-#include <stdint.h>
+#include "row.h"
 #include "input.h"
-
-#define COLUMN_USERNAME_SIZE 32
-#define COLUMN_EMAIL_SIZE 255
 
 // 语句类型：insert, select
 typedef enum
@@ -18,19 +15,12 @@ typedef enum
         STATEMENT_SELECT
 } StatementType;
 
-typedef struct
-{
-        uint32_t id; // 要插入的ID
-        char username[COLUMN_USERNAME_SIZE]; // 要插入的列名
-        char email[COLUMN_EMAIL_SIZE];
-} Row;
-
 // SQL语句
-typedef struct
+struct Statement
 {
         StatementType type;
         Row row_to_insert;
-} Statement;
+};
 
 // 解析SQL语句的返回值
 typedef enum
@@ -42,4 +32,4 @@ typedef enum
 
 PrepareResult prepare_statement(InputBuffer *input_buffer, Statement *statement);
 
-#endif //SQLITE_PARSER_H
+#endif //SQLITE___PARSER_H
