@@ -2,31 +2,39 @@
 // Created by Wang Wei on 2021/5/7.
 //
 
+#include <cstdlib>
 #include "exec.h"
-#include "table.h"
+#include "save.h"
+#include "cursor.h"
 
 ExecuteResult execute_insert(Statement *statement, Table *table)
 {
-        if (table->num_rows >= TABLE_MAX_ROWS)
+        if (table->num_rows >= MAX_ROWS_PER_TABLE)
         {
                 return EXECUTE_TABLE_FULL;
         }
 
-        Row *row_to_insert = &(statement->row_to_insert);
-        serialize_row(row_to_insert, row_slot(table, table->num_rows));
+        // 写入一行
+        Cursor *cursor = table_end(table);
+        insert_row(cursor_value(cursor), &(statement->row_to_insert));
         table->num_rows += 1;
+
+        free(cursor);
 
         return EXECUTE_SUCCESS;
 }
 
 ExecuteResult execute_select(Statement *statement, Table *table)
 {
-        Row row{};
-        for (uint32_t i = 0; i < table->num_rows; ++i)
+        Cursor *cursor = table_start(table);
+        while (!(cursor->end_of_table))
         {
-                deserialize_row(row_slot(table, i), &row);
-                print_row(&row);
+                print_row(cursor_value(cursor));
+                cursor_advance(cursor);
         }
+
+        free(cursor);
+
         return EXECUTE_SUCCESS;
 }
 

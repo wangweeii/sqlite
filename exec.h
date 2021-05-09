@@ -6,7 +6,7 @@
 #define SQLITE___EXEC_H
 
 #include "parser.h"
-#include "table.h"
+#include "save.h"
 
 typedef enum
 {

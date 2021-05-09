@@ -5,8 +5,8 @@
 #ifndef SQLITE___PARSER_H
 #define SQLITE___PARSER_H
 
-#include "row.h"
 #include "input.h"
+#include "save.h"
 
 // 语句类型：insert, select
 typedef enum
@@ -26,7 +26,9 @@ struct Statement
 typedef enum
 {
         PREPARE_SUCCESS,
+        PREPARE_NEGATIVE_ID,
         PREPARE_SYNTAX_ERROR,
+        PREPARE_STRING_TOO_LONG,
         PREPARE_UNRECOGNIZED_STATEMENT
 } PrepareResult;
 
