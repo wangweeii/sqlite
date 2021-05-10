@@ -20,7 +20,7 @@ void print_row(Row *row)
         printf("(%d, %s, %s)\n", row->id, row->username, row->email);
 }
 
-// 打开文件，并创建一个内存页与之关联起来
+// 打开文件，并创建一个分页器与之关联起来
 Pager *pager_open(const char *filename)
 {
         int fd = open(filename, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR);
@@ -30,12 +30,13 @@ Pager *pager_open(const char *filename)
                 exit(EXIT_FAILURE);
         }
 
+        // 使用SEEK_END表示将打开点移到文件最后加0的地方
         off_t file_length = lseek(fd, 0, SEEK_END);
 
         auto *pager = static_cast<Pager *>(malloc(sizeof(Pager)));
         pager->file_descriptor = fd;
-        pager->file_length = file_length;
-        pager->num_pages = file_length / PAGE_SIZE;
+        pager->file_length     = file_length;
+        pager->num_pages       = file_length / PAGE_SIZE;
 
         if (file_length % PAGE_SIZE != 0)
         {
@@ -62,7 +63,7 @@ void *get_page(Pager *pager, uint32_t page_num)
 
         if (pager->pages[page_num] == nullptr)
         {
-                void *page = malloc(sizeof(Pager));
+                void     *page     = malloc(sizeof(Pager));
                 uint32_t num_pages = pager->file_length / sizeof(Pager);
 
                 // 如果文件长度对页大小取余有剩的，说明后面还能再放一页
@@ -71,6 +72,7 @@ void *get_page(Pager *pager, uint32_t page_num)
                         num_pages += 1;
                 }
 
+                // 要取的页没有超过总页数，将文件中对应的内容读到这一页中
                 if (page_num <= num_pages)
                 {
                         lseek(pager->file_descriptor, page_num * sizeof(Pager), SEEK_SET);
@@ -112,20 +114,24 @@ void pager_flush(Pager *pager, uint32_t page_num)
 // 打开数据库文件
 Table *db_open(const char *filename)
 {
-        auto *table = static_cast<Table *>(malloc(sizeof(Table)));
-
         Pager *pager = pager_open(filename);
-        uint32_t num_rows = pager->file_length / sizeof(Row);
-
+        auto  *table = static_cast<Table *>(malloc(sizeof(Table)));
         table->pager = pager;
+        table->root_page_num = 0;
+
+        if (pager->num_pages == 0)
+        {
+                void *root_node = get_page(pager, 0);
+                initialize_leaf_node(root_node);
+        }
 
         return table;
 }
 
 void db_close(Table *table)
 {
-        Pager *pager = table->pager;
-        for (uint32_t i = 0; i != pager->num_pages; ++i)
+        Pager         *pager = table->pager;
+        for (uint32_t i      = 0; i != pager->num_pages; ++i)
         {
                 // 只写回已从文件中读取出来的页，没读出来的指针为空
                 if (pager->pages[i] == nullptr)

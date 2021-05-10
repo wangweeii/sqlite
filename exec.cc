@@ -16,7 +16,7 @@ ExecuteResult execute_insert(Statement *statement, Table *table)
 
         // 写入一行
         Cursor *cursor = table_end(table);
-        insert_row(cursor_value(cursor), &(statement->row_to_insert));
+        insert_row((Row *) cursor_value(cursor), &(statement->row_to_insert));
         table->num_rows += 1;
 
         free(cursor);
@@ -29,7 +29,7 @@ ExecuteResult execute_select(Statement *statement, Table *table)
         Cursor *cursor = table_start(table);
         while (!(cursor->end_of_table))
         {
-                print_row(cursor_value(cursor));
+                print_row((Row *) cursor_value(cursor));
                 cursor_advance(cursor);
         }
 

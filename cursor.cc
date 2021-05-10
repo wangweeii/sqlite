@@ -4,17 +4,18 @@
 
 #include <cstdlib>
 #include "cursor.h"
+#include "node.h"
 
 Cursor *table_start(Table *table)
 {
         auto *cursor = static_cast<Cursor *>(malloc(sizeof(Cursor)));
-        cursor->table = table;
-        // cursor->row_num = 0;
-        // cursor->end_of_table = (table->num_rows == 0);
+        cursor->table    = table;
         cursor->page_num = table->root_page_num;
         cursor->cell_num = 0;
 
-        void *root_node = get_page(table->pager, table->root_page_num);
+        void     *root_node = get_page(table->pager, table->root_page_num);
+        uint32_t cell_nums  = leaf_node_cell_nums(root_node);
+        cursor->end_of_table = (cell_nums == 0);
 
         return cursor;
 }
@@ -22,25 +23,33 @@ Cursor *table_start(Table *table)
 Cursor *table_end(Table *table)
 {
         auto *cursor = static_cast<Cursor *>(malloc(sizeof(Cursor)));
-        cursor->table = table;
-        cursor->row_num = table->num_rows;
+        cursor->table    = table;
+        cursor->page_num = table->root_page_num;
+
+        void     *root_node = get_page(table->pager, table->root_page_num);
+        uint32_t cell_nums  = leaf_node_cell_nums(root_node);
+
+        cursor->cell_num     = cell_nums;
         cursor->end_of_table = true;
 
         return cursor;
 }
 
-Row *cursor_value(Cursor *cursor)
+void *cursor_value(Cursor *cursor)
 {
-        // 先计算出目标行所在页的起始地址
-        Row *page = static_cast<Row *>(get_page(cursor->table->pager, cursor->row_num / ROWS_PER_PAGE));
-        // 再计算出目标行是所在页的第几行
-        uint32_t row_offset = cursor->row_num % ROWS_PER_PAGE;
+        // 先读取游标中的这一页
+        void *page = get_page(cursor->table->pager, cursor->page_num);
 
-        return page + row_offset;
+        return &(leaf_node_cell(page, cursor->cell_num)->row);
 }
 
 void cursor_advance(Cursor *cursor)
 {
-        cursor->row_num += 1;
-        cursor->end_of_table = (cursor->row_num >= cursor->table->num_rows);
+        void *page = get_page(cursor->table->pager, cursor->page_num);
+
+        cursor->cell_num += 1;
+        if (cursor->cell_num >= leaf_node_cell_nums(page))
+        {
+                cursor->end_of_table = true;
+        }
 }
