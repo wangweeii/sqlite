@@ -101,14 +101,6 @@ void pager_flush(Pager *pager, uint32_t page_num)
                 exit(EXIT_FAILURE);
         }
 
-        // 定位到要写入的页在文件中的偏移量
-        off_t offset = lseek(pager->file_descriptor, page_num * PAGE_SIZE, SEEK_SET);
-        if (offset == -1)
-        {
-                printf("Error seeking: %d\n", errno);
-                exit(EXIT_FAILURE);
-        }
-
         ssize_t bytes_written = write(pager->file_descriptor, pager->pages[page_num], PAGE_SIZE);
         if (bytes_written == -1)
         {
@@ -142,14 +134,6 @@ void db_close(Table *table)
                 }
                 pager_flush(pager, i);
         }
-
-        // 还要把最后不足一页的数据写入到文件中
-        // uint32_t num_additional_rows = table->num_rows % ROWS_PER_PAGE;
-        // if (num_additional_rows > 0)
-        // {
-        //         uint32_t page_num = num_full_pages;
-        //         pager_flush(pager, page_num, num_additional_rows * sizeof(Row));
-        // }
 
         int result = close(pager->file_descriptor);
         if (result == -1)
