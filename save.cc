@@ -34,6 +34,13 @@ Pager *pager_open(const char *filename)
         auto *pager = static_cast<Pager *>(malloc(sizeof(Pager)));
         pager->file_descriptor = fd;
         pager->file_length = file_length;
+        pager->num_pages = file_length / PAGE_SIZE;
+
+        if (file_length % PAGE_SIZE != 0)
+        {
+                printf("DataBase file is not a whole number of pages. Corrupt file.\n");
+                exit(EXIT_FAILURE);
+        }
 
         for (uint32_t i = 0; i != MAX_PAGES_PER_TABLE; ++i)
         {
@@ -75,13 +82,17 @@ void *get_page(Pager *pager, uint32_t page_num)
                 }
 
                 pager->pages[page_num] = page;
+                if (page_num >= pager->num_pages)
+                {
+                        pager->num_pages = page_num + 1;
+                }
         }
 
         return pager->pages[page_num];
 }
 
 // 写入pager的第page_num页
-void pager_flush(Pager *pager, uint32_t page_num, uint32_t size)
+void pager_flush(Pager *pager, uint32_t page_num)
 {
         if (pager->pages[page_num] == nullptr)
         {
@@ -97,7 +108,7 @@ void pager_flush(Pager *pager, uint32_t page_num, uint32_t size)
                 exit(EXIT_FAILURE);
         }
 
-        ssize_t bytes_written = write(pager->file_descriptor, pager->pages[page_num], size);
+        ssize_t bytes_written = write(pager->file_descriptor, pager->pages[page_num], PAGE_SIZE);
         if (bytes_written == -1)
         {
                 printf("Error writing: %d\n", errno);
@@ -122,25 +133,23 @@ Table *db_open(const char *filename)
 void db_close(Table *table)
 {
         Pager *pager = table->pager;
-        // 这个变量名表示写满的页
-        uint32_t num_full_pages = table->num_rows / ROWS_PER_PAGE;
-        for (uint32_t i = 0; i != num_full_pages; ++i)
+        for (uint32_t i = 0; i != pager->num_pages; ++i)
         {
                 // 只写回已从文件中读取出来的页，没读出来的指针为空
                 if (pager->pages[i] == nullptr)
                 {
                         continue;
                 }
-                pager_flush(pager, i, PAGE_SIZE);
+                pager_flush(pager, i);
         }
 
         // 还要把最后不足一页的数据写入到文件中
-        uint32_t num_additional_rows = table->num_rows % ROWS_PER_PAGE;
-        if (num_additional_rows > 0)
-        {
-                uint32_t page_num = num_full_pages;
-                pager_flush(pager, page_num, num_additional_rows * sizeof(Row));
-        }
+        // uint32_t num_additional_rows = table->num_rows % ROWS_PER_PAGE;
+        // if (num_additional_rows > 0)
+        // {
+        //         uint32_t page_num = num_full_pages;
+        //         pager_flush(pager, page_num, num_additional_rows * sizeof(Row));
+        // }
 
         int result = close(pager->file_descriptor);
         if (result == -1)

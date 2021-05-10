@@ -23,6 +23,7 @@ struct Pager
 {
         int file_descriptor;
         uint32_t file_length;
+        uint32_t num_pages;
         // void *pages[MAX_PAGES_PER_TABLE];
         void *pages[MAX_PAGES_PER_TABLE];
 };
@@ -32,7 +33,7 @@ const uint32_t MAX_ROWS_PER_TABLE = ROWS_PER_PAGE * MAX_PAGES_PER_TABLE;
 
 struct Table
 {
-        uint32_t num_rows;
+        uint32_t root_page_num;
         Pager *pager;
 };
 
@@ -44,7 +45,7 @@ Pager *pager_open(const char *filename);
 
 void *get_page(Pager *pager, uint32_t page_num);
 
-void pager_flush(Pager *pager, uint32_t page_num, uint32_t size);
+void pager_flush(Pager *pager, uint32_t page_num);
 
 Table *db_open(const char *filename);
 

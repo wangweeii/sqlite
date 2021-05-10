@@ -9,8 +9,12 @@ Cursor *table_start(Table *table)
 {
         auto *cursor = static_cast<Cursor *>(malloc(sizeof(Cursor)));
         cursor->table = table;
-        cursor->row_num = 0;
-        cursor->end_of_table = (table->num_rows == 0);
+        // cursor->row_num = 0;
+        // cursor->end_of_table = (table->num_rows == 0);
+        cursor->page_num = table->root_page_num;
+        cursor->cell_num = 0;
+
+        void *root_node = get_page(table->pager, table->root_page_num);
 
         return cursor;
 }
