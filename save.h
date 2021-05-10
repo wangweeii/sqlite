@@ -19,6 +19,7 @@ struct Row
         char email[COLUMN_EMAIL_SIZE + 1];
 };
 
+// 分页器
 struct Pager
 {
         int file_descriptor;
