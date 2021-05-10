@@ -1,5 +1,5 @@
 #include <iostream>
-// #include <cstring>
+#include <cstring>
 #include "exec.h"
 #include "input.h"
 #include "save.h"

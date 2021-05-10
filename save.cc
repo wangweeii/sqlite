@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <cstring>
 #include <sys/file.h>
 #include <unistd.h>
 #include "save.h"
@@ -125,7 +126,6 @@ Table *db_open(const char *filename)
         uint32_t num_rows = pager->file_length / sizeof(Row);
 
         table->pager = pager;
-        table->num_rows = num_rows;
 
         return table;
 }
