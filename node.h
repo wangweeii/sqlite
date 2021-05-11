@@ -3,9 +3,9 @@
 //
 
 #include <cstdint>
-#include "data.h"
+#include "base.h"
 // #include "save.h"
-// #include "cursor.h"
+#include "cursor.h"
 
 #ifndef SQLITE_NODE_H
 #define SQLITE_NODE_H
@@ -38,6 +38,8 @@ struct LeafNodeHeader
         uint32_t         cell_nums;
 };
 
+constexpr uint32_t MAX_CELLS_PER_LEAF = (PAGE_SIZE - sizeof(LeafNodeHeader)) / sizeof(Cell);
+
 NodeType get_node_type(void *node);
 
 void set_node_type(void *node, NodeType type);
@@ -58,5 +60,9 @@ void leaf_node_cell_nums(void *node, uint32_t num);
 Cell *leaf_node_cell(void *node, uint32_t cell_num);
 
 void initialize_leaf_node(void *node);
+
+void leaf_node_insert(Cursor *cursor, uint32_t key, Row *row);
+
+void print_leaf_node(void *node);
 
 #endif //SQLITE_NODE_H

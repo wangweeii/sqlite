@@ -3,6 +3,7 @@
 //
 
 #include <string>
+#include <cstring>
 #include "parser.h"
 
 // 准备insert语句
@@ -10,10 +11,10 @@ PrepareResult prepare_insert(InputBuffer *input_buffer, Statement *statement)
 {
         statement->type = STATEMENT_INSERT;
 
-        std::string keyword = strtok(input_buffer->buffer, " ");
+        std::string keyword   = strtok(input_buffer->buffer, " ");
         std::string id_string = strtok(nullptr, " ");
-        std::string username = strtok(nullptr, " ");
-        std::string email = strtok(nullptr, " ");
+        std::string username  = strtok(nullptr, " ");
+        std::string email     = strtok(nullptr, " ");
 
         if (id_string.empty() || username.empty() || email.empty())
         {

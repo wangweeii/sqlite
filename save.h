@@ -6,7 +6,7 @@
 #define SQLITE___TABLE_H
 
 #include <cstdint>
-#include "data.h"
+#include "base.h"
 // #include "node.h"
 
 void insert_row(Row *destination, Row *source);

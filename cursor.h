@@ -5,7 +5,7 @@
 #ifndef SQLITE___CURSOR_H
 #define SQLITE___CURSOR_H
 
-#include "data.h"
+#include "base.h"
 
 struct Cursor
 {

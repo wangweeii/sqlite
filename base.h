@@ -2,8 +2,10 @@
 // Created by Wang Wei on 2021/5/10.
 //
 
-#ifndef SQLITE_DATA_H
-#define SQLITE_DATA_H
+#ifndef SQLITE_BASE_H
+#define SQLITE_BASE_H
+
+#include <cstdint>
 
 #define COLUMN_USERNAME_SIZE 32
 #define COLUMN_EMAIL_SIZE 218
@@ -38,4 +40,4 @@ struct Table
         uint32_t root_page_num; // 根节点所在的页号
 };
 
-#endif //SQLITE_DATA_H
+#endif //SQLITE_BASE_H

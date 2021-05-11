@@ -4,20 +4,22 @@
 
 #include <cstdlib>
 #include "exec.h"
+#include "node.h"
 #include "save.h"
 #include "cursor.h"
 
 ExecuteResult execute_insert(Statement *statement, Table *table)
 {
-        if (table->num_rows >= MAX_ROWS_PER_TABLE)
+        void *node = get_page(table->pager, table->root_page_num);
+        if (leaf_node_cell_nums(node) >= MAX_CELLS_PER_LEAF)
         {
                 return EXECUTE_TABLE_FULL;
         }
 
         // 写入一行
         Cursor *cursor = table_end(table);
-        insert_row((Row *) cursor_value(cursor), &(statement->row_to_insert));
-        table->num_rows += 1;
+        // leaf_node_insert(cursor, statement->row_to_insert.id, &(statement->row_to_insert));
+        leaf_node_insert(table_end(table), statement->row_to_insert.id, &(statement->row_to_insert));
 
         free(cursor);
 

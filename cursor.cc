@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include "cursor.h"
 #include "node.h"
+#include "save.h"
 
 Cursor *table_start(Table *table)
 {
