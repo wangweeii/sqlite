@@ -3,10 +3,12 @@
 //
 
 #include <cstdlib>
+#include <cstdio>
 #include "cursor.h"
 #include "node.h"
 #include "save.h"
 
+// 表的起始游标
 Cursor *table_start(Table *table)
 {
         auto *cursor = static_cast<Cursor *>(malloc(sizeof(Cursor)));
@@ -21,19 +23,20 @@ Cursor *table_start(Table *table)
         return cursor;
 }
 
-Cursor *table_end(Table *table)
+// 从表中找到key所在的游标
+Cursor *table_find(Table *table, uint32_t key)
 {
-        auto *cursor = static_cast<Cursor *>(malloc(sizeof(Cursor)));
-        cursor->table    = table;
-        cursor->page_num = table->root_page_num;
+        void *root_node = get_page(table->pager, table->root_page_num);
 
-        void     *root_node = get_page(table->pager, table->root_page_num);
-        uint32_t cell_nums  = leaf_node_cell_nums(root_node);
-
-        cursor->cell_num     = cell_nums;
-        cursor->end_of_table = true;
-
-        return cursor;
+        if (get_node_type(root_node) == NODE_LEAF)
+        {
+                return leaf_node_find(table, table->root_page_num, key);
+        }
+        else
+        {
+                printf("Need to implement searching an internal node\n");
+                exit(EXIT_FAILURE);
+        }
 }
 
 void *cursor_value(Cursor *cursor)

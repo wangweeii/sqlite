@@ -17,11 +17,19 @@ ExecuteResult execute_insert(Statement *statement, Table *table)
         }
 
         // 写入一行
-        Cursor *cursor = table_end(table);
-        // leaf_node_insert(cursor, statement->row_to_insert.id, &(statement->row_to_insert));
-        leaf_node_insert(table_end(table), statement->row_to_insert.id, &(statement->row_to_insert));
+        uint32_t key_to_insert = statement->row_to_insert.id;
+        Cursor   *cursor       = table_find(table, key_to_insert);
 
-        free(cursor);
+        if (cursor->cell_num < leaf_node_cell_nums(node))
+        {
+                uint32_t key_at_index = leaf_node_cell(node, cursor->cell_num)->key;
+                if (key_to_insert == key_at_index)
+                {
+                        return EXECUTE_DUPLICATE_KEY;
+                }
+        }
+
+        leaf_node_insert(cursor, key_to_insert, &(statement->row_to_insert));
 
         return EXECUTE_SUCCESS;
 }

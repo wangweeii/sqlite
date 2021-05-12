@@ -6,6 +6,7 @@
 #include <cstring>
 #include <sys/file.h>
 #include <unistd.h>
+#include "node.h"
 #include "save.h"
 
 void insert_row(Row *destination, Row *source)
@@ -116,7 +117,7 @@ Table *db_open(const char *filename)
 {
         Pager *pager = pager_open(filename);
         auto  *table = static_cast<Table *>(malloc(sizeof(Table)));
-        table->pager = pager;
+        table->pager         = pager;
         table->root_page_num = 0;
 
         if (pager->num_pages == 0)

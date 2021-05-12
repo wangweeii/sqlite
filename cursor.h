@@ -15,9 +15,11 @@ struct Cursor
         bool     end_of_table;
 };
 
+// 表的起始游标
 Cursor *table_start(Table *table);
 
-Cursor *table_end(Table *table);
+// 从表中找到key所在的游标
+Cursor *table_find(Table *table, uint32_t key);
 
 void *cursor_value(Cursor *cursor);
 

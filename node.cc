@@ -85,6 +85,41 @@ void leaf_node_insert(Cursor *cursor, uint32_t key, Row *row)
         ((LeafNodeHeader *) node)->cell_nums += 1;
 }
 
+Cursor *leaf_node_find(Table *table, uint32_t page_num, uint32_t key)
+{
+        void     *node     = get_page(table->pager, page_num);
+        uint32_t cells_num = leaf_node_cell_nums(node);
+
+        auto *cursor = static_cast<Cursor *>(malloc(sizeof(Cursor)));
+        cursor->table    = table;
+        cursor->page_num = page_num;
+
+        // 二叉查找
+        uint32_t min_index          = 0;
+        uint32_t one_past_max_index = cells_num;
+        while (one_past_max_index != min_index)
+        {
+                uint32_t middle       = (min_index + one_past_max_index) / 2;
+                uint32_t key_at_index = leaf_node_cell(node, middle)->key;
+
+                if (key == key_at_index)
+                {
+                        cursor->cell_num = middle;
+                        break;
+                }
+                if (key < key_at_index)
+                {
+                        one_past_max_index = middle;
+                }
+                else
+                {
+                        min_index = middle + 1;
+                }
+        }
+
+        return cursor;
+}
+
 void print_leaf_node(void *node)
 {
         printf("%d Cells in this leaf node.\n", leaf_node_cell_nums(node));

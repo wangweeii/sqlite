@@ -29,6 +29,7 @@ MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table)
         {
                 printf("Tree:\n");
                 print_leaf_node(get_page(table->pager, 0));
+                return META_COMMAND_SUCCESS;
         }
         else
         {
@@ -88,6 +89,9 @@ int main(int argc, char *argv[])
                 {
                         case EXECUTE_SUCCESS:
                                 printf("Executed.\n");
+                                break;
+                        case EXECUTE_DUPLICATE_KEY:
+                                printf("Error: Duplicate key.\n");
                                 break;
                         case EXECUTE_TABLE_FULL:
                                 printf("Error: Table full.\n");
