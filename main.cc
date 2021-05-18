@@ -28,7 +28,8 @@ MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table)
         else if (strcmp(input_buffer->buffer, ".btree") == 0)
         {
                 printf("Tree:\n");
-                print_leaf_node(get_page(table->pager, 0));
+                // print_leaf_node(get_page(table->pager, 0));
+                print_tree(table->pager->pages[table->root_page_num]);
                 return META_COMMAND_SUCCESS;
         }
         else

@@ -23,11 +23,11 @@ struct CommonNodeHeader
         void     *parent;
 };
 
-// 非叶子节点头
+// 内部节点头
 struct InternalNodeHeader
 {
         CommonNodeHeader common_header;
-        uint32_t         num_keys;
+        uint32_t         key_nums;
         void             *right_child;
 };
 
@@ -38,10 +38,14 @@ struct LeafNodeHeader
         uint32_t         cell_nums;
 };
 
-constexpr uint32_t MAX_CELLS_PER_LEAF = (PAGE_SIZE - sizeof(LeafNodeHeader)) / sizeof(Cell);
+constexpr uint32_t MAX_CELLS_PER_LEAF          = (PAGE_SIZE - sizeof(LeafNodeHeader)) / sizeof(Cell);
+// 分割叶节点时右侧分多少Cell
+constexpr uint32_t LEAF_NODE_RIGHT_SPLIT_COUNT = (MAX_CELLS_PER_LEAF + 1) / 2;
+constexpr uint32_t LEAF_NODE_LEFT_SPLIT_COUNT  = MAX_CELLS_PER_LEAF + 1 - LEAF_NODE_RIGHT_SPLIT_COUNT;
 
 NodeType get_node_type(void *node);
 
+// 通用节点操作函数
 void set_node_type(void *node, NodeType type);
 
 bool is_node_root(void *node);
@@ -50,6 +54,26 @@ void set_node_root(void *node, bool is_root);
 
 void *node_parent(void *node);
 
+uint32_t get_node_max_key(void *node);
+
+// 打印所有节点
+void print_tree(void *node);
+
+
+// 内部节点操作函数
+// 获取内部节点中的key数量
+uint32_t internal_node_key_nums(void *node);
+
+// 获取内部节点的最右孩子
+void *internal_node_right_child(void *node);
+
+// 获取内部节点中的InternalCell指针
+InternalCell *internal_node_cell(void *node, uint32_t cell_num);
+
+// 获取内部节点中的某个子节点指针
+void *internal_node_child(void *node, uint32_t child_num);
+
+// 叶节点操作函数
 // 获取叶子节点中的Cell数量
 uint32_t leaf_node_cell_nums(void *node);
 

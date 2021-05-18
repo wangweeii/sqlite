@@ -25,6 +25,12 @@ struct Cell
         Row      row;
 };
 
+struct InternalCell
+{
+        void *child;
+        uint32_t key;
+};
+
 // 分页器
 struct Pager
 {

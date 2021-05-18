@@ -9,6 +9,7 @@
 #include "node.h"
 #include "save.h"
 
+// 所有节点通用操作函数
 NodeType get_node_type(void *node)
 {
         return ((CommonNodeHeader *) node)->node_type;
@@ -34,6 +35,82 @@ void *node_parent(void *node)
         return ((CommonNodeHeader *) node)->parent;
 }
 
+uint32_t get_node_max_key(void *node)
+{
+        switch (get_node_type(node))
+        {
+                case NODE_INTERNAL:
+                        return internal_node_cell(node, internal_node_key_nums(node) - 1)->key;
+                case NODE_LEAF:
+                        return leaf_node_cell(node, leaf_node_cell_nums(node) - 1)->key;
+        }
+}
+
+// 打印所有节点
+void print_tree(void *node)
+{
+        switch (get_node_type(node))
+        {
+                case NODE_LEAF:
+                        print_leaf_node(node);
+                        break;
+                case NODE_INTERNAL:
+                        for (uint32_t i = 0; i != internal_node_key_nums(node); ++i)
+                        {
+                                print_tree(internal_node_child(node, i));
+                        }
+                        print_tree(internal_node_right_child(node));
+        }
+}
+
+// 内部节点操作函数
+// 获取内部节点中的key数量
+uint32_t internal_node_key_nums(void *node)
+{
+        return ((InternalNodeHeader *) node)->key_nums;
+}
+
+// 获取内部节点的最右孩子
+void *internal_node_right_child(void *node)
+{
+        return ((InternalNodeHeader *) node)->right_child;
+}
+
+// 获取内部节点中的InternalCell指针
+InternalCell *internal_node_cell(void *node, uint32_t cell_num)
+{
+        return ((InternalCell *) ((InternalNodeHeader *) node + 1)) + cell_num;
+}
+
+// 获取内部节点中的某个子节点指针
+void *internal_node_child(void *node, uint32_t child_num)
+{
+        uint32_t key_nums = internal_node_key_nums(node);
+        if (child_num > key_nums)
+        {
+                printf("Tried to access child_num %d > key_nums %d\n", child_num, key_nums);
+                exit(EXIT_FAILURE);
+        }
+        else if (child_num == key_nums)
+        {
+                return internal_node_right_child(node);
+        }
+        else
+        {
+                return internal_node_cell(node, child_num)->child;
+        }
+}
+
+// 初始化内部节点
+void initialize_internal_node(void *node)
+{
+        set_node_type(node, NODE_INTERNAL);
+        set_node_root(node, false);
+        ((InternalNodeHeader *) node)->key_nums    = 0;
+        ((InternalNodeHeader *) node)->right_child = nullptr;
+}
+
+// 叶节点操作函数
 // 获取叶子节点中的Cell数量
 uint32_t leaf_node_cell_nums(void *node)
 {
@@ -46,7 +123,7 @@ void leaf_node_cell_nums(void *node, uint32_t num)
         ((LeafNodeHeader *) node)->cell_nums = num;
 }
 
-// 获取叶子节点中某一个键值对的指针
+// 获取叶子节点中某一个键值对Cell的指针
 Cell *leaf_node_cell(void *node, uint32_t cell_num)
 {
         return ((Cell *) ((LeafNodeHeader *) node + 1)) + cell_num;
@@ -55,7 +132,7 @@ Cell *leaf_node_cell(void *node, uint32_t cell_num)
 void initialize_leaf_node(void *node)
 {
         set_node_type(node, NODE_LEAF);
-        set_node_root(node, true);
+        set_node_root(node, false);
         ((LeafNodeHeader *) node)->cell_nums = 0;
 }
 

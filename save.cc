@@ -95,6 +95,11 @@ void *get_page(Pager *pager, uint32_t page_num)
         return pager->pages[page_num];
 }
 
+uint32_t get_unused_page_num(Pager *pager)
+{
+        return pager->num_pages;
+}
+
 // 写入pager的第page_num页
 void pager_flush(Pager *pager, uint32_t page_num)
 {
