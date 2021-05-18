@@ -39,6 +39,7 @@ Cursor *table_find(Table *table, uint32_t key)
         }
 }
 
+// 读取游标中的一行记录
 void *cursor_value(Cursor *cursor)
 {
         // 先读取游标中的这一页
@@ -47,6 +48,7 @@ void *cursor_value(Cursor *cursor)
         return &(leaf_node_cell(page, cursor->cell_num)->row);
 }
 
+// 游标往下走一行
 void cursor_advance(Cursor *cursor)
 {
         void *page = get_page(cursor->table->pager, cursor->page_num);

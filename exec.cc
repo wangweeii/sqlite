@@ -11,10 +11,10 @@
 ExecuteResult execute_insert(Statement *statement, Table *table)
 {
         void *node = get_page(table->pager, table->root_page_num);
-        if (leaf_node_cell_nums(node) >= MAX_CELLS_PER_LEAF)
-        {
-                return EXECUTE_TABLE_FULL;
-        }
+        // if (leaf_node_cell_nums(node) >= MAX_CELLS_PER_LEAF)
+        // {
+        //         return EXECUTE_TABLE_FULL;
+        // }
 
         // 写入一行
         uint32_t key_to_insert = statement->row_to_insert.id;

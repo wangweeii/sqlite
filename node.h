@@ -61,6 +61,8 @@ Cell *leaf_node_cell(void *node, uint32_t cell_num);
 
 void initialize_leaf_node(void *node);
 
+void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *row);
+
 void leaf_node_insert(Cursor *cursor, uint32_t key, Row *row);
 
 Cursor *leaf_node_find(Table *table, uint32_t page_num, uint32_t key);

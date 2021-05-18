@@ -59,14 +59,26 @@ void initialize_leaf_node(void *node)
         ((LeafNodeHeader *) node)->cell_nums = 0;
 }
 
+void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *row)
+{
+        void     *old_node    = get_page(cursor->table->pager, cursor->page_num);
+        uint32_t new_page_num = get_unused_page_num(cursor->table->pager);
+        void     *new_node    = get_page(cursor->table->pager, new_page_num);
+        initialize_leaf_node(new_node);
+
+
+}
+
 void leaf_node_insert(Cursor *cursor, uint32_t key, Row *row)
 {
         void     *node     = get_page(cursor->table->pager, cursor->page_num);
         uint32_t cells_num = leaf_node_cell_nums(node);
         if (cells_num >= MAX_CELLS_PER_LEAF)
         {
-                printf("Need to implement splitting a leaf node.\n");
-                exit(EXIT_FAILURE);
+                // printf("Need to implement splitting a leaf node.\n");
+                // exit(EXIT_FAILURE);
+                leaf_node_split_and_insert(cursor, key, row);
+                return;
         }
 
         if (cursor->cell_num < cells_num)
