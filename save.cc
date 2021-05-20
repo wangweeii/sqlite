@@ -53,7 +53,7 @@ Pager *pager_open(const char *filename)
         return pager;
 }
 
-// 读取特定的某一页
+// 读取特定的某一页，如果该页不存在，就分配一页
 void *get_page(Pager *pager, uint32_t page_num)
 {
         if (page_num > MAX_PAGES_PER_TABLE)

@@ -15,6 +15,7 @@ void print_row(Row *row);
 
 Pager *pager_open(const char *filename);
 
+// 读取特定的某一页，如果该页不存在，就分配一页
 void *get_page(Pager *pager, uint32_t page_num);
 
 uint32_t get_unused_page_num(Pager*pager);

@@ -28,7 +28,7 @@ struct InternalNodeHeader
 {
         CommonNodeHeader common_header;
         uint32_t         key_nums;
-        void             *right_child;
+        uint32_t         right_child;
 };
 
 // 叶子节点头
@@ -64,6 +64,9 @@ void print_tree(void *node);
 // 获取内部节点中的key数量
 uint32_t internal_node_key_nums(void *node);
 
+// 设置内部节点的key数量
+void internal_node_key_nums(void *node, uint32_t key_nums);
+
 // 获取内部节点的最右孩子
 void *internal_node_right_child(void *node);
 
@@ -72,6 +75,10 @@ InternalCell *internal_node_cell(void *node, uint32_t cell_num);
 
 // 获取内部节点中的某个子节点指针
 void *internal_node_child(void *node, uint32_t child_num);
+
+// 初始化内部节点
+void initialize_internal_node(void *node);
+
 
 // 叶节点操作函数
 // 获取叶子节点中的Cell数量
